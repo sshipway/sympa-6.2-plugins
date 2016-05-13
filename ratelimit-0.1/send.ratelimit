@@ -1,0 +1,8 @@
+title.gettext Subscribers only, limit 10 postings per day each
+
+is_owner([listname],[sender])              smtp,dkim,smime,md5    -> do_it
+is_editor([listname],[sender])             smtp,dkim,smime,md5    -> do_it
+! is_subscriber([listname],[sender])        smtp,dkim,smime,md5    -> reject
+CustomCondition::rate_limit([listname],[sender],10,[header->Message-ID]) smtp,dkim,smime,md5 -> reject(tt2=rate_limit)
+true()                                     smtp,dkim,smime,md5    -> do_it
+

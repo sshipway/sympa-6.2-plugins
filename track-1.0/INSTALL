@@ -1,0 +1,75 @@
+Sympa Mail Tracking v1.0
+Steve Shipway 2015
+steve@steveshipway.org
+
+
+How to Install
+--------------
+
+Note that different people will have installed files into different locations.  In this example, I will use the locations where we have installed, but your system may be different.
+
+Install Files
+-------------
+track.cgi
+This is the redirect script that handles the actual tracking
+Edit this to have the correct database credentials for the Sympa database (find these in the sympa.conf)
+Copy this file to /var/www/cgi-bin (your web server /cgi-bin) and ensure it can be accessed through the web by everyone.
+
+tracking.tt2
+This is the custom action web template for the Sympa stats interface
+Copy this file to web_tt2 (your sympa base web_tt2 directory)
+
+help_tracking.tt2
+This is the help page for the web interface.
+Copy this file to web_tt2 (your sympa base web_tt2 directory)
+
+Tracking.pm
+This is the TT2 Plugin that does all the work.
+Copy this to /usr/share/sympa/lib/Template/Plugin (under your Sympa perl library directory).  You may need to create the Template/Plugin directory under lib, if it does not yet exist.
+
+Patch Web Template
+------------------
+nav.tt2.part
+This is the additional sections for the nav.tt2 to add the new Tracking tab.
+Copy your default/web_tt2/nav.tt2 (default nav.tt2) to web_tt2 (base web_tt2 dir) if it is not already there.
+Edit your web_tt2/nav.tt2 to make the changes as in nav.tt2.part.  These changes are
+a) Change the IF statement to add the extra criteria, and
+b) Add the extra tab at the end of the <ul>
+See nav.tt2.example for a modifed default nav.tt2, if you have not made any other changes to nav.tt2 on your system
+
+Create Database Tables
+----------------------
+tables.sql
+This contains the SQL to create the tracking tables in the Sympa database.
+You may wish to edit this SQL, for example to change the database engine or encoding character set.  This is only tested against MySQL but with modification should work on any other database backend that supports subselects.
+Run this SQL against your Sympa database, which should create the required three tables.
+
+# mysql sympa < tables.sql
+
+Test
+----
+To test, create a new mailing list and enable merge_feature on the list.
+When logged in as list owner, editor or listmaster you should see a new tab, Tracking, in the Admin page.
+
+Add a test user to the list.  Send a message to the list containing at least the following:
+
+[% USE Tracking %]
+[% Tracking.base %]
+[% FILTER Tracking %]
+This is a link <A href=http://www.sympa.org/>http://www.sympa.org/</A>
+[% END %]
+Message Ends
+
+If you have installed correctly, the message should be delivered to the list.  
+If a blank message arrives, this is probably a TT2 error.  Check your TT2 code and that the Tracking.pm file was correctly installed.  Check your sympa.log for TT2 errors.
+
+When the message is distributed, check that the link has been changed to something like http://yourserver/cgi-bin/track.cgi/ABCD/1
+
+In the Sympa web interface, click the Tracking tab, and you should see the message listed.  You can view the details for the message and links within it.
+
+Open the message in your mail reader.  If you have image download, this should register the read in the Tracking page.  Click on the link and you should be sent to the Sympa website, but the link click count will increase in the Tracking page.
+
+Send Feedback
+-------------
+This is an early version, so please send feedback to steve@steveshipway.org
+

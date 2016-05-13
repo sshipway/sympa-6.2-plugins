@@ -1,0 +1,71 @@
+<!-- $Id: help_tracking.tt2  $ -->
+
+
+
+<h2 class="block">[%|helploc%]Message Tracking documentation[%END%]</h2>
+<P>
+To use the Tracking module, you first need to enable the <b>merge_feature</b> on your list.
+</P><P>
+When the merge_feature is enabled, the <b>Tracking</b> tab will be displayed in the Admin web interface.  This will display
+the details for any tracked messages.
+</P><P>
+To send a tracked message, you need to add three specific items of TT2 code to the message.
+</P>
+<H3>Add the Plugin</H3>
+<P>In all cases, you should start the message by including the Tracking plugin.</P>
+[% TAGS [- -] %]
+<P class="retraitita">
+[% USE Tracking -%]
+</P><P>
+Note that, if your tracking CGI is not installed at <code>/cgi-bin/track.cgi</code>,
+on the same host as the Sympa software, then you need to specify the tracking
+redirect URL here:</P>
+<P class="retraitita">
+[% USE Tracking( "https://myserver/sympa/cgi-bin/mytrack.cgi") -%]
+</P>
+
+<H3>Add the Read-track item</H3>
+<P>
+This should be done once (and only once) in the message, at any point after the USE statement.  Generally, you should place it somewhere right at the end of the message.</P>
+<P class="retraitita">
+[% Tracking.base -%]
+</P>
+<H3>Indicate trackable links, if any</H3>
+<P>
+This is optional, and can be done any number of times after the USE statement.  You should not place any other FILTER, INCLUDE or PROCESS directives within the trackable section.
+</P>
+<P class="retraitita">
+[% FILTER Tracking -%]<br />
+... place your message and any embedded HTML links in here ...<br />
+[% END -%]
+</P>
+<H3>Create an Unsubscribe link</H3>
+<P>You can generate an unsubscribe link as a URL, or by using a special 
+function.  The special function will generate a visible URL if the message
+is viewed in a non-HTML-capable mail reader, and a clickable link otherwise.
+You should make sure that your Unsubscribe URL is not inside the FILTER
+block, else it will not work.</P>
+
+<P class="retraitita">
+If you do not wish to receive this message, 
+then you can [% Tracking.unsubscribe('Unsubscribe') %].<BR><BR>
+If you do not wish to receive this message,
+then click &lt;A href=[% wwsympa_url %]/auto_signoff/[% listname %]/[% user.escaped_email %]&gt;here&lt;/A&gt;<br />
+</P>
+
+<H3>Example</H3>
+<P class="retraitita">
+[% USE Tracking -%]<br />
+Hello, [% user.gecos %]!<br />
+[% FILTER Tracking -%]<br />
+This is a wonderful offer for you to purchase.  Simply click &lt;A href=http://spammy.com/&gt;here&lt;/A&gt; to buy our all-new Chocolate Fireguards!<br />
+[% END -%]<br />
+&lt;hr&gt;<br />
+To be removed from this list, click &lt;A href=[% wwsympa_url %]/auto_signoff/[% listname %]/[% user.escaped_email %]&gt;here&lt;/A&gt;<br />
+[% Tracking.base -%]
+</P>
+[- TAGS [% %] -]
+<P>
+In this example, the <b>spammy.com</b> link is tracked, but the unsubscribe link is not.  It also keeps track of message views, thanks to the <b>Tracking.base</b> at the end.  Note that only HTML links (IE, the HREF in an A tag) are modified and tracked; a URL simply placed in text is not modified.
+</P>
+<!-- end help_tracking.tt2 -->

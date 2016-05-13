@@ -1,0 +1,43 @@
+diff -bBr hidden-attr-0.1/default/web_tt2/edit_attributes.tt2 sympa-6.2.4/default/web_tt2/edit_attributes.tt2
+7d6
+< [% IF k.optional != 'hidden' || is_listmaster || is_owner || may_add %]
+12,20c11,14
+< [% IF k.optional != 'readonly' || is_listmaster || is_owner || may_add %]
+< [% SET readonly = 'readonly' %]
+< [% ELSE %]
+< [% SET readonly = '' %]
+< [% END %]
+< [% IF k.type == 'string' %]<input type="text" name="custom_attribute.[% k.id %]" id="custom_attribute.[% k.id %]" value="[% subscriber.custom_attribute.item(k.id).value %]" size="40" [%readonly%] />
+< [% ELSIF k.type == 'integer' %]<input type="text" name="custom_attribute.[% k.id %]" id="custom_attribute.[% k.id %]" value="[% subscriber.custom_attribute.item(k.id).value %]" size="10" [%readonly%] />
+< [% ELSIF k.type == 'text' %]<textarea cols="50" rows="5" name="custom_attribute.[% k.id %]" id="custom_attribute.[% k.id %]" value="[% subscriber.custom_attribute.item(k.id).value %]" size="500" [%readonly%] >[% subscriber.custom_attribute.item(k.id).value %]</textarea>
+< [% ELSIF k.type == 'enum' %]<select name="custom_attribute.[% k.id %]" [%readonly%]><option value=""></option>
+---
+> [% IF k.type == 'string' %]<input type="text" name="custom_attribute.[% k.id %]" id="custom_attribute.[% k.id %]" value="[% subscriber.custom_attribute.item(k.id).value %]" size="40" />
+> [% ELSIF k.type == 'integer' %]<input type="text" name="custom_attribute.[% k.id %]" id="custom_attribute.[% k.id %]" value="[% subscriber.custom_attribute.item(k.id).value %]" size="10" />
+> [% ELSIF k.type == 'text' %]<textarea cols="50" rows="5" name="custom_attribute.[% k.id %]" id="custom_attribute.[% k.id %]" value="[% subscriber.custom_attribute.item(k.id).value %]" size="500">[% subscriber.custom_attribute.item(k.id).value %]</textarea>
+> [% ELSIF k.type == 'enum' %]<select name="custom_attribute.[% k.id %]"><option value=""></option>
+27,28c21
+< [% END %] 
+< [% IF k.optional == 'required' %]*[% END %]
+---
+> [% END %] [% IF k.optional == 'required' %]*[% END %]
+30d22
+< [% END %]
+diff -bBr hidden-attr-0.1/default/web_tt2/subscriber_table.tt2 sympa-6.2.4/default/web_tt2/subscriber_table.tt2
+73d72
+< [% IF ca_k.optional != 'hidden' || is_listmaster || may_add || is_owner  %]
+76d74
+< [% END %]
+159,163c157
+< 	  [% FOREACH ca_k IN list_conf.custom_attribute %]
+< [% IF ca_k.optional != 'hidden'  || is_listmaster || may_add || is_owner %]
+< <td>[% SET id = ca_k.id %][% u.custom_attribute.$id.value %]</td>
+< [% END %]
+< [% END %]
+---
+> 	  [% FOREACH ca_k IN list_conf.custom_attribute %]<td>[% SET id = ca_k.id %][% u.custom_attribute.$id.value %]</td>[% END %]
+diff -bBr hidden-attr-0.1/src/lib/Sympa/ListDef.pm sympa-6.2.4/src/lib/Sympa/ListDef.pm
+2126c2126
+<                 'format'     => ['required', 'optional', 'hidden', 'readonly']
+---
+>                 'format'     => ['required', 'optional']

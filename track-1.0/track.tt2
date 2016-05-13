@@ -1,0 +1,183 @@
+<!-- $Id: track.tt2  $ -->
+<div class="block">
+
+<h2>[%|loc%]Message Tracking[%END%]</h2><br />
+
+[% IF is_owner || is_listmaster || is_editor %]
+[% IF list_conf.merge_feature == 'on' %]
+
+<div id="tracking">
+This is the tracking info for list [% list %]@[% robot %].
+<br /><br />
+This shows any messages sent with the Tracking module enabled.  <br />
+To learn how to use the tracking module, see the [%|helploc(path_cgi)%]<a href="%1/help/tracking">tracking documentation</a>[%END%].
+<br /><br />
+
+[% IF track_cmd == 'delete' && ! errmsg %]
+<!-- Message [% track_msgid %] successfully deleted -->
+[% SET track_msgid = '' %]
+[% END %]
+
+[% IF track_msgid %]
+[% IF track_linkid %]
+<!-- we are listing link tracking details -->
+<div id="table_container">
+<table class="listOfItems" summary="Message Info">
+<tr><th>Message Subject</th><td>[% msg.subject %]</td></tr>
+<tr><th>Message Sent On</th><td align=right>[% msg.sent %]</td></tr>
+<tr><th>Number sent</th><td align=right>[% msg.num %]</td></tr>
+<tr><th>Number viewed</th><td align=right>[% msg.seen %]</td></tr>
+<tr><th>View rate</th><td align=right>[% msg.rate.substr(0,5) %]%</td></tr>
+<tr><th>Link Seq</th><td align=right>[% lnk.id %]</td></tr>
+<tr><th>Link URL</th><td><A href="[% lnk.url %]">[% lnk.url %]</A></td></tr>
+<tr><th>Link Clickers</th><td align=right>[% lnk.seen %]</td></tr>
+<tr><th>Link Click rate</th><td align=right>[% SET pct = ( lnk.seen / msg.num * 100 ); pct.substr(0,5) %]%</td></tr>
+<tr><th>Viewers Link Click rate</th><td align=right>[% SET pct = ( lnk.seen / msg.seen * 100 ); pct.substr(0,5) %]%</td></tr>
+</table></div>
+  <a class="actionMenuLinks" href="[% path_cgi %]/lca/track/[% list %]/list/[% track_msgid %]">Back to message detail</a>
+  <a class="actionMenuLinks" href="[% path_cgi %]/lca/track/[% list %]/list">Back to list of messages</a>
+<br /> <br />
+<div id="table_container">
+<table class="listOfItems" summary="Message Links">
+<tr><th>Recipient</th><th>Clicks</th><th>First click</th></tr>
+[% SET dark = 0 %]
+[% FOREACH click = click_list %]
+  [% IF dark == '1' %]
+    <tr>
+    [% SET dark = 0 %]
+  [% ELSE %]
+    <tr class="color0">
+    [% SET dark = 1 %]
+  [% END %]
+  <td>&nbsp;<A href="mailto:[% click.rcpt %]">[% click.rcpt %]</A>&nbsp;</td>
+  <td align=right>&nbsp;[% click.count %]&nbsp;</td>
+  <td align=right>&nbsp;[% click.first %]&nbsp;</td>
+  </tr>
+[% END %] <!-- end subjects loop -->
+</table></div>
+
+[% ELSE %]
+[% IF track_cmd == 'show' %]
+<!-- we are listing message reception details -->
+<div id="table_container">
+<table class="listOfItems" summary="Message Info">
+<tr><th>Message Subject</th><td>[% msg.subject %]</td></tr>
+<tr><th>Message Sent On</th><td align=right>[% msg.sent %]</td></tr>
+<tr><th>Number sent</th><td align=right>[% msg.num %]</td></tr>
+<tr><th>Number viewed</th><td align=right>[% msg.seen %]</td></tr>
+<tr><th>View rate</th><td align=right>[% msg.rate.substr(0,5) %]%</td></tr>
+</table></div>
+  <a class="actionMenuLinks" href="[% path_cgi %]/lca/track/[% list %]/list/[% track_msgid %]">Back to message detail</a>
+  <a class="actionMenuLinks" href="[% path_cgi %]/lca/track/[% list %]/list">Back to list of messages</a>
+<br /> <br />
+<div id="table_container">
+<table class="listOfItems" summary="Message Links">
+<tr><th>Recipient</th><th>Clicks</th><th>First click</th></tr>
+[% SET dark = 0 %]
+[% FOREACH click = click_list %]
+  [% IF dark == '1' %]
+    <tr>
+    [% SET dark = 0 %]
+  [% ELSE %]
+    <tr class="color0">
+    [% SET dark = 1 %]
+  [% END %]
+  <td>&nbsp;<A href="mailto:[% click.rcpt %]">[% click.rcpt %]</A>&nbsp;</td>
+  <td align=right>&nbsp;[% click.count %]&nbsp;</td>
+  <td align=right>&nbsp;[% click.first %]&nbsp;</td>
+  </tr>
+[% END %] <!-- end subjects loop -->
+</table></div>
+
+[% ELSE %]
+<!-- we are listing message info and link summary -->
+<div id="table_container">
+<table class="listOfItems" summary="Message Info">
+<tr><th>Message Subject</th><td>[% msg.subject %]</td></tr>
+<tr><th>Message Sent On</th><td>[% msg.sent %]</td></tr>
+<tr><th>Number sent</th><td align=right>[% msg.num %]</td></tr>
+<tr><th>Number viewed</th><td align=right>[% msg.seen %]</td></tr>
+<tr><th>View rate</th><td align=right>[% msg.rate.substr(0,5) %]%</td></tr>
+</table></div>
+[% IF msg.seen > 0 -%]
+<a class="actionMenuLinks" href="[% path_cgi %]/lca/track/[% list %]/show/[% msg.id %]">Show message reception details</a>
+[% END -%]
+  <a class="actionMenuLinks" href="[% path_cgi %]/lca/track/[% list %]/list">Back to list of messages</a>
+<br /> <br />
+
+<div id="table_container">
+<table class="listOfItems" summary="Message Links">
+<tr><th>Link #</th><th>Target URL</th><th># Visitors</th><th>Visitor rate</th><th>Commands</th></tr>
+[% SET dark = 0 %]
+[% FOREACH link = link_list %]
+  [% IF dark == '1' %]
+    <tr>
+    [% SET dark = 0 %]
+  [% ELSE %]
+    <tr class="color0">
+    [% SET dark = 1 %]
+  [% END %]
+  <td align=right>&nbsp;[% link.id %]&nbsp;</td>
+  <td>&nbsp;<A href="[% link.url %]">[% link.url %]</A>&nbsp;</td>
+  <td align=right>&nbsp;[% link.rcpt %]&nbsp;</td>
+  <td align=right>&nbsp;[% SET pct = ( link.rcpt / msg.num * 100 ); pct.substr(0,5) %]%&nbsp;</td>
+  <td align=center>
+  [% IF link.rcpt > 0 %]
+  <a class="actionMenuLinks" href="[% path_cgi %]/lca/track/[% list %]/show/[% msg.id %]/[% link.id %]">Detail</a>
+  [% END %]
+  </td>
+  </tr>
+[% END %] <!-- end subjects loop -->
+</table></div>
+[% END %]
+
+[% END %]
+
+[% ELSE %]
+<!-- we are listing message summary -->
+<div id="table_container">
+<table class="listOfItems" summary="Messages table">
+<tr><th>Message Subject</th><th>Posting time</th><th>Messages Sent</th><th>Commands</th></tr>
+[% SET dark = 0 %]
+[% FOREACH msg = message_list %]
+  [% IF dark == '1' %]
+    <tr>
+    [% SET dark = 0 %]
+  [% ELSE %]
+    <tr class="color0">
+    [% SET dark = 1 %]
+  [% END %]
+  <td>&nbsp;[% msg.subject %]&nbsp;</td>
+  <td>&nbsp;[% msg.sent %]&nbsp;</td>
+  <td align=right>[% msg.num %]&nbsp;</td>
+  <td align=center>
+  <a class="actionMenuLinks" href="[% path_cgi %]/lca/track/[% list %]/list/[% msg.id %]">Detail</a>
+  <a class="actionMenuLinks" onclick="return request_confirm_link('[% path_cgi %]/lca/track/[% list %]/delete/[% msg.id %]','[%|loc%]Do you really want to delete all logs for this message?[%END%]')">Delete</a>
+  </td>
+  </tr>
+[% END %] <!-- end subjects loop -->
+</table></div>
+
+[% IF message_count == 0 %]
+There are no messages with tracking in the logs.
+<br />
+<!--
+[% message_sql %]
+-->
+[% END %]
+[% END %]
+
+[% IF errmsg and errmsg != '' %]
+<div><p class="retraitita">
+<B>ERROR:</B><br />[% errmsg %]<br /><br /><B>SQL:</B><br />[% message_sql %]
+</p></div>
+[% END %]
+[% ELSE %]
+This list does not have the Merge Feature enabled, and so cannot do tracking.
+[% END %]
+[% ELSE %]
+You do not have sufficient rights to view tracking data.
+[% END %]
+
+</div>
+<!-- end track.tt2 -->

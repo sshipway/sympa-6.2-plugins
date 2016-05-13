@@ -1,0 +1,14 @@
+##### This line replaces the existing test for action == 'admin'
+
+[% IF action == 'admin' || action_type == 'admin' || action == 'editfile' || custom_action == 'tracking' %]
+
+##### Insert this piece in the tabs list for list action == 'admin'
+
+[% IF is_priv || is_listmaster %]
+    [% IF list_conf.merge_feature == 'on' %]
+      [% IF action == 'lca' && custom_action == 'track' %][% SET class = 'active' %][% ELSE %][% SET class = '' %][% END %]
+      <li class="[% class %]"><a  href="[% path_cgi %]/lca/track/[% list %]"
+>[%|loc%]Tracking[%END%]</a></li>
+    [% END %]
+[% END %]
+
