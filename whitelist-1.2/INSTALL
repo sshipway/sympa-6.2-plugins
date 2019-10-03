@@ -22,7 +22,7 @@ files.  Change the paths to what is appropriate for your system.
    These must exist as a default for lists that do not have a defined whitelist
    or modlist.
 
-3. Install the whitelist.tt2 template and the whitelist and fr directories into
+3. Install the whitelist.tt2 template and the whitelist/ and fr/ directories into
    the web_tt2 directory. This is the admin pages for the whitelist and modlist.
    It goes into your web_tt2 customisation directory.
 
@@ -30,16 +30,46 @@ files.  Change the paths to what is appropriate for your system.
    and Modlist menu items.  
    Add [% PROCESS whitelist/nav.tt2 %] to it, right after the blacklist part.
 
+                [% IF conf.use_blacklist != 'none' %]
+                    [% IF action == 'blacklist' %]
+                        [% SET class = 'active' %]
+                    [% ELSE %]
+                        [% SET class = '' %]
+                    [% END %]
+                    <li class="[% class %]">
+                        <a href="[% 'blacklist' | url_rel([list]) %]" >
+                            [%|loc%]Blacklist[%END%]
+                        </a>
+                    </li>
+                [% END %]
+            [% PROCESS whitelist/nav.tt2 %]
+
 5. Update search.tt2 and review.tt2.  These add the Whitelist and Modlist
    buttons to the subscribers review page.
    Add [% PROCESS whitelist/links.tt2 %] to those files, right after the
    blacklist part.
+
+    [% IF conf.use_blacklist != 'none' %]
+        <a class="actionMenuLinks" href="[% 'blacklist' | url_rel([list]) %]">
+            [%|loc%]Blacklist[%END%]
+        </a>
+    [% END %]
+   [% PROCESS whitelist/links.tt2 %]
 
 6. Update admin.t22.  This adds the white/modlist options to the list admin
    page.  This is optional but recommended.
    Add [% PROCESS whitelist/admin.tt2 %] to it, right after the blacklist part.
    Be sure to add it inside the [% IF is_listmaster || is_owner || may_del %]
    part.
+
+        [% IF conf.use_blacklist != 'none' %]
+            <li>
+                <strong><a href="[% 'blacklist' | url_rel([list]) %]" >[%|loc%]Blacklist:[%END%]</a></strong>
+                [%|loc%]Handles the set of black-listed mail addresses for this list.[%END%]
+            </li>
+        [% END %]
+     [% PROCESS whitelist/admin.tt2 %]
+   [% END %]
 
 7. Copy include.send.header into your scenari directory.  This
    activates the Whitelist and Modlist on all lists, though until you define
