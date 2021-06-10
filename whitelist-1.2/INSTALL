@@ -44,6 +44,16 @@ files.  Change the paths to what is appropriate for your system.
                 [% END %]
             [% PROCESS whitelist/nav.tt2 %]
 
+   You also need to update the Basic Operations header test around line 214.
+   Change the line that reads:
+
+      [% IF action == 'admin' || action_type == 'admin' || action == 'editfile' ~%]
+
+   Replace it with:
+
+      [% IF action == 'admin' || action_type == 'admin' || action == 'editfile' || ( action == 'lca'  && ( custom_action == 'whitelist' || custom_action == 'modlist' ) ) ~%]
+
+
 5. Update search.tt2 and review.tt2.  These add the Whitelist and Modlist
    buttons to the subscribers review page.
    Add [% PROCESS whitelist/links.tt2 %] to those files, right after the
